@@ -34,7 +34,10 @@
         let htmlString = `<p>Add memes to <a href="https://drive.google.com/drive/folders/1nJ4J7alKEK7EWOxn13jCmVTONOkUHfhq">https://drive.google.com/drive/folders/1nJ4J7alKEK7EWOxn13jCmVTONOkUHfhq</a></p>`;
         htmlString += '<div>'
         for (let file of data) {
-          if (file.name.match(/(mov|mp4|webm)$/)) {
+          if (file.name.match(/(html|htm)$/i) || file.name.startsWith('.')) {
+            continue
+          }
+          if (file.name.match(/(mov|mp4|webm)$/i)) {
             htmlString += `<video autoplay loop controls src="https://rottenswap.org/memes/${file.name}">`
           }
           else {
