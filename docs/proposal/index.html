@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <title>RottenSwap Governance Proposals</title>
+      <style>
+        body {
+          margin: 8px
+        }
+        a, p {
+          font-family: Roboto Mono;
+          display: block; 
+          max-width: 600px; 
+          margin: auto;
+          padding: 8px;
+        }
+        a {
+          color: black;
+          text-decoration: none;
+        }
+        .center {
+          text-align: center;
+        }
+        .bold {
+          font-weight: 800
+        }
+        .answer {
+          margin: 8px;
+        }
+        img, video {
+          display: block; 
+          max-width: 600px; 
+          margin: auto;
+        }
+        @media (max-width: 600px) {
+          img, video {
+            max-width: 95vw; 
+          }
+        }
+      </style>
+  </head>
+  <body>
+    <script>
+      (async () => {
+        const apiUrl = `https://rotapi.xyz/governance`
+        const proposalId = getProposalId()
+        console.log({proposalId})
+
+        if (proposalId) {
+          await proposal(proposalId)
+        }
+        else {
+          await allProposals()
+        }
+
+        footer()
+
+        async function proposal(id) {
+          const loading = document.createElement('p')
+          loading.innerHTML = `Loading...`
+          loading.className = 'center'
+          document.body.appendChild(loading)
+
+          const response = await fetch(`${apiUrl}/getProposal/${id}`)
+          const proposal = await response.json()
+
+          loading.remove()
+
+          const headerMessage = document.createElement('a')
+          headerMessage.href = window.location.href.split('?')[0]
+          headerMessage.innerHTML = `Proposal ID ${proposal.id}`
+          headerMessage.className = 'center'
+          document.body.appendChild(headerMessage)
+
+          helpInfo(id)
+
+          const title = document.createElement('p')
+          title.innerHTML = `${proposal.id}. ${proposal.title} (${proposal.voteCount} votes)`
+          title.className = 'bold'
+          document.body.appendChild(title)
+
+          const description = document.createElement('p')
+          description.innerHTML = proposal.description
+          document.body.appendChild(description)
+
+          for (const answer of proposal.answers) {
+            console.log(answer)
+          
+            const title = document.createElement('p')
+            title.innerHTML = `${answer.id}. ${answer.title} (${answer.voteCount} votes)`
+            document.body.appendChild(title)
+          }
+
+          const backButton = document.createElement('a')
+          backButton.href = window.location.href.split('?')[0]
+          backButton.innerHTML = 'All proposals'
+          backButton.className = 'center'
+          document.body.appendChild(backButton)
+        }
+
+        async function allProposals() {
+          const loading = document.createElement('p')
+          loading.innerHTML = `Loading...`
+          loading.className = 'center'
+          document.body.appendChild(loading)
+
+          const response = await fetch(`${apiUrl}/getProposals`)
+          const proposals = await response.json()
+
+          loading.remove()
+
+          const headerMessage = document.createElement('p')
+          headerMessage.innerHTML = `Proposals`
+          headerMessage.className = 'center'
+          document.body.appendChild(headerMessage)
+
+          helpInfo()
+
+          for (const proposal of proposals) {
+            console.log(proposal)
+          
+            const title = document.createElement('a')
+            title.href = `?id=${proposal.id}`
+            title.innerHTML = `${proposal.id}. ${proposal.title} (${proposal.voteCount} votes)`
+            title.className = 'bold'
+            document.body.appendChild(title)
+
+            const description = document.createElement('p')
+            description.innerHTML = proposal.description
+            document.body.appendChild(description)
+          }
+        }
+
+        function helpInfo(proposalId) {
+          const helpInfo = document.createElement('p')
+          const proposalIdText = proposalId || `"proposalId"`
+          helpInfo.innerHTML = `Note: Use command /add_vote ${proposalIdText} "answerId"`
+          document.body.appendChild(helpInfo)
+        }
+
+        function footer () {
+          const footerMessage = document.createElement('p')
+          footerMessage.innerHTML = `This page sucks. DM @timtemplet on Telegram if you're interested in designing a better one.`
+          footerMessage.className = 'center'
+          document.body.appendChild(footerMessage)
+        }
+
+        function getProposalId () {
+          try {
+            return window.location.search.match(/id=[^&#]/)[0].replace('id=', '')
+          }
+          catch (e) {}
+        }
+      })()
+    </script>
+  <body>
+</html>
