@@ -64,28 +64,38 @@
           loading.className = 'center'
           document.body.appendChild(loading)
 
-          const response = await fetch(`${apiUrl}/getProposal/${id}`)
-          const proposal = await response.json()
+          let proposal
+          try {
+            const response = await fetch(`${apiUrl}/getProposal/${id}`)
+            proposal = await response.json()
+            console.log({proposal})
+            loading.remove()
+          }
+          catch (e) {
+            loading.innerHTML = `Error: ${e.message}`
+            throw e
+          }
 
-          loading.remove()
-
+          // header
           const headerMessage = document.createElement('a')
           headerMessage.href = window.location.href.split('?')[0]
           headerMessage.innerHTML = `Proposal ID ${proposal.id}`
           headerMessage.className = 'center'
           document.body.appendChild(headerMessage)
-
           helpInfo(id)
 
+          // title
           const title = document.createElement('p')
           title.innerHTML = `${proposal.id}. ${proposal.title} (${proposal.voteCount} votes)`
           title.className = 'bold'
           document.body.appendChild(title)
 
+          // description
           const description = document.createElement('p')
           description.innerHTML = proposal.description
           document.body.appendChild(description)
 
+          // answers
           for (const answer of proposal.answers) {
             console.log(answer)
           
@@ -94,6 +104,7 @@
             document.body.appendChild(title)
           }
 
+          // back button
           const backButton = document.createElement('a')
           backButton.href = window.location.href.split('?')[0]
           backButton.innerHTML = 'All proposals'
@@ -107,21 +118,29 @@
           loading.className = 'center'
           document.body.appendChild(loading)
 
-          const response = await fetch(`${apiUrl}/getProposals`)
-          const proposals = await response.json()
+          let proposals
+          try {
+            const response = await fetch(`${apiUrl}/getProposals`)
+            proposals = await response.json()
+            console.log({proposals})
+            loading.remove()
+          }
+          catch (e) {
+            loading.innerHTML = `Error: ${e.message}`
+            throw e
+          }
 
-          loading.remove()
+          proposals.reverse()
 
+          // header
           const headerMessage = document.createElement('p')
           headerMessage.innerHTML = `Proposals`
           headerMessage.className = 'center'
           document.body.appendChild(headerMessage)
-
           helpInfo()
 
-          for (const proposal of proposals) {
-            console.log(proposal)
-          
+          // proposals
+          for (const proposal of proposals) {          
             const title = document.createElement('a')
             title.href = `?id=${proposal.id}`
             title.innerHTML = `${proposal.id}. ${proposal.title} (${proposal.voteCount} votes)`
